@@ -20,7 +20,6 @@
       crossorigin="anonymous"
     />
     <title>{% block title %}Page{% endblock %}</title>
-
   </head>
 
   <body>
@@ -46,27 +45,29 @@
       </div>
     </nav>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                {% if category == 'error' %}
-                    <div class="alert alert-danger alter-alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="buttton" class="close" data-dissmiss="alert">
-                            <i aria-hidden="true">&times;</i>
-                        </button>
-                    </div>
-                {% else %}
-                    <div class="alert alert-success alter-alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="buttton" class="close" data-dissmiss="alert">
-                            <i aria-hidden="true">&times;</i>
-                        </button>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'error' %}
+    <div
+      class="alert alert-danger alter-alert-dismissible fade show"
+      role="alert"
+    >
+      {{ message }}
+      <button type="buttton" class="close" data-dissmiss="alert">
+        <i aria-hidden="true">&times;</i>
+      </button>
+    </div>
+    {% else %}
+    <div
+      class="alert alert-success alter-alert-dismissible fade show"
+      role="alert"
+    >
+      {{ message }}
+      <button type="buttton" class="close" data-dissmiss="alert">
+        <i aria-hidden="true">&times;</i>
+      </button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
 
     <div class="container">{% block content %} {% endblock %}</div>
     <script
@@ -89,6 +90,9 @@
       type="text/javascript"
       src="{{ url_for('static', filename='bootstrap.min.js') }}"
     ></script>
-    <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='index.js') }}"
+    ></script>
   </body>
 </html>
