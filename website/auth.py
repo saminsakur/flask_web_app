@@ -1,11 +1,12 @@
 from flask.globals import request
 from flask.templating import render_template
+from flask.helpers import flash, url_for
 from flask.blueprints import Blueprint
+from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.utils import redirect
+from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from .models import User
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask.helpers import flash, url_for
 
 auth = Blueprint(__name__, "views")
 
@@ -19,7 +20,6 @@ def sign_up():
         password2 = request.form.get("password2")
 
         user = User.query.filter_by(email=email).first()
-        print(user)
 
         if user:
             flash("Email already exists!", category="error")
@@ -39,31 +39,37 @@ def sign_up():
             )
             db.session.add(usr)
             db.session.commit()
-
+            login_user(usr, remember=True)
             flash("Account created!", category="success")
             return redirect(url_for("website.views.home"))
 
-    return render_template("signup.html")
+    return render_template("signup.html", user=current_user)
 
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get("email")
+        password = request.form.get("password")
 
         user = User.query.filter_by(email=email).first()
+        print(user)
         if user:
             if check_password_hash(user.password, password):
-                flash('Logged in successfully!', category='success')
+                flash("Logged in successfully!", category="success")
+                login_user(user, remember=True)
+                return redirect(url_for("website.views.home"))
+
             else:
-                flash('Incorrect password, please try again', category="error")
+                flash("Incorrect password, please try again", category="error")
         else:
             flash("Email does not exists!", category="error")
 
-    return render_template("login.html")
+    return render_template("login.html", user=current_user)
 
 
 @auth.route("/logout")
+@login_required
 def logout():
-    return render_template("logout.html")
+    logout_user()
+    return redirect(url_for("website.auth.login"))
